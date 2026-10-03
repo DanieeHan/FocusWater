@@ -79,11 +79,19 @@ docs/             开发记录、隐私草稿及上架资料
 - [App Store 上架清单](docs/APP_STORE_LAUNCH_CHECKLIST.md)
 - [GitHub 发布准备](docs/GITHUB_RELEASE_PREPARATION.md)
 
-许可证尚未选择，本次准备不添加默认开源许可证。
+## 使用许可
+
+本项目采用自定义 [FocusWater Source-Available License](LICENSE)。允许查看、学习、fork、修改源码，以及在自己的设备上私下构建使用；分享源码时必须保留许可证和版权声明。
+
+**未经作者书面许可，禁止将原版或修改版发布、上架、出售或分发为 App，包括免费分发、TestFlight 外部测试、安装包下载和对外托管服务。改名、换图标或修改代码不解除这一限制。**
+
+这是带有 App 分发限制的源码公开项目。完整许可条款以 `LICENSE` 为准。
 
 ## English
 
 FocusWater is a native SwiftUI focus tracker that turns focused minutes into bottles of water. It supports iPhone, iPad, macOS, and Mac Catalyst, with local SwiftData persistence and optional private CloudKit synchronization. This repository is a pre-release development snapshot.
+
+License: source viewing, source-only forks, modifications, and private personal builds are permitted under [LICENSE](LICENSE). Distribution or publication of original or modified apps requires the author's prior written permission, whether free or paid.
 
 ## Features
 

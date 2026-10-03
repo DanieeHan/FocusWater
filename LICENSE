@@ -1,0 +1,58 @@
+FocusWater Source-Available License, Version 1.0
+
+Copyright (c) 2026 DanieeHan. All rights reserved except as expressly granted below.
+
+1. Scope
+
+"Software" means the source code and original assets in this repository, including
+copies and modified versions. Separately licensed third-party material, if any,
+remains subject to its own license. "Application" means any executable, binary,
+installable package, or hosted app or service incorporating or derived from the
+Software, whether modified or unmodified.
+
+2. Permitted source use
+
+You may view, download, copy, study, and modify the Software, and build and run it
+privately for your own use. You may fork this repository and share source-only
+copies or source-only modifications, provided that you retain this license and
+the copyright notice, clearly identify your modifications, and do not grant
+permissions broader than this license. These permissions include submitting
+source-code contributions to this repository.
+
+3. No application distribution
+
+Without prior written permission from the copyright holder, you may not publish,
+distribute, sell, sublicense, or otherwise make an Application available to any
+third party. This prohibition applies to both free and paid distribution and to
+both original and modified versions, including renamed, rebranded, or ported
+versions. It includes App Store or other marketplace listings, TestFlight or
+other external beta distribution, direct downloads, IPA/PKG/DMG or other binary
+packages, prebuilt releases, and public or third-party hosted deployments.
+
+Sharing source under section 2 does not authorize recipients to distribute an
+Application. Changing the name, appearance, bundle identifier, platform, or other
+parts of the Software does not remove this restriction.
+
+4. Other rights
+
+No trademark rights are granted. Rights not expressly granted are reserved.
+Nothing in this license limits rights that cannot be restricted under applicable
+law. The copyright holder may separately authorize other uses in writing.
+
+5. Termination
+
+The permissions granted by this license terminate automatically if you violate
+its terms. Continued use then requires written permission from the copyright
+holder, except for rights provided by applicable law or binding platform terms.
+
+6. Disclaimer
+
+TO THE EXTENT PERMITTED BY APPLICABLE LAW, THE SOFTWARE IS PROVIDED "AS IS",
+WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. THE
+COPYRIGHT HOLDER IS NOT LIABLE FOR CLAIMS, DAMAGES, OR OTHER LIABILITY ARISING
+FROM THE SOFTWARE OR ITS USE.
+
+This is a custom source-available license with an application-distribution
+restriction. It is not an unrestricted open-source license. The English text
+above is the license; README summaries are explanatory only.
