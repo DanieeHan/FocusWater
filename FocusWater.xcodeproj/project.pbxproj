@@ -1,0 +1,516 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A30100000000000000000001 /* FocusTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A30200000000000000000001; };
+		A30100000000000000000002 /* FocusBackup.swift in Sources */ = {isa = PBXBuildFile; fileRef = A30200000000000000000002; };
+		A30100000000000000000003 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A30200000000000000000003; };
+		DA33AA35F7134042B6E61EA1 /* FocusWaterApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73425A66CFA746B48555B6A4 /* FocusWaterApp.swift */; };
+		A20100000000000000000001 /* AppStoreCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20200000000000000000001 /* AppStoreCoordinator.swift */; };
+		7274173BE0124598A5E6AE61 /* FocusSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C9BB19534F4BDB97BF5CC2 /* FocusSession.swift */; };
+		0D9FB0A848024D8B9EF2C954 /* FocusSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7E9B048B32A48319A72A21E /* FocusSettings.swift */; };
+		A11200000000000000000001 /* FocusCSVDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11100000000000000000001 /* FocusCSVDocument.swift */; };
+		FF650A4733854303B2B95CCF /* WaterBottle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792D08434548467FBC19E3A8 /* WaterBottle.swift */; };
+		03CC15383D7048AF9420AB91 /* FocusViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11D2B63CC63A4E1C9F20E066 /* FocusViewModel.swift */; };
+		9C7F2E9F7A614A748DF30785 /* AppPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AEB1B4D510E4DABA1C819B2 /* AppPreferences.swift */; };
+		4FEF6F64905E4BF5BFF85E5C /* Color+Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBBED563173F4BC19E421E50 /* Color+Theme.swift */; };
+		769F025BDC55455BB23FCE9D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 613668D3DCA144AE9226DB70 /* ContentView.swift */; };
+		DEAAC2A3CBD247E2B2DCC0EA /* DailyGoalSetupSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD8378A8379E47BF8C4F27CF /* DailyGoalSetupSheet.swift */; };
+		9B74D8EC81304F3791957C0E /* FocusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72977350DA847D7ACD5F71F /* FocusView.swift */; };
+		9F0025627D0845D2BB1D84E8 /* BottleCanvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11661B588C624F84AF7468F8 /* BottleCanvas.swift */; };
+		1F4726A2418944FD888164DE /* AddFocusSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A15E5CF52714F908FBCBD60 /* AddFocusSheet.swift */; };
+		591563AC4C184B92AD975D03 /* WarehouseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B42BE025724AB0B0A4804A /* WarehouseView.swift */; };
+		FA5C99F7B147458EB5AF1E17 /* BottleCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95472CE42014E6983C12FD3 /* BottleCard.swift */; };
+			BBE0B04CF40F4BD4843534B3 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B655013EDB3C471EBFB60FFD /* StatsView.swift */; };
+			7B4579DA3D5D404A8B97A065 /* WeeklyChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = E427D26A83154994B4D6393A /* WeeklyChart.swift */; };
+			4D4E19030A5E428F824BFEFA /* StreakBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3054D2CAC1114B7FA94AE83D /* StreakBadge.swift */; };
+			A11400000000000000000001 /* EditFocusSessionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11300000000000000000001 /* EditFocusSessionSheet.swift */; };
+			3BA77C0B6053455BB2942DE4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C1A4EC4F48F9417AB0A6870A /* Assets.xcassets */; };
+			E77B75E8E1B348CCB47066EC /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = EA314E281F6249EB88BCEBF6 /* PrivacyInfo.xcprivacy */; };
+			B00100000000000000000001 /* FocusViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00200000000000000000001 /* FocusViewModelTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B00B00000000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 11AECF96D3E54412A8EBBD61 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E0EBBC3721C84C03B812DCEE;
+			remoteInfo = FocusWater;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		A30200000000000000000001 /* FocusTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusTimer.swift; sourceTree = "<group>"; };
+		A30200000000000000000002 /* FocusBackup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusBackup.swift; sourceTree = "<group>"; };
+		A30200000000000000000003 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		6F4D8A83E52F4CE3A610B2C7 /* FocusWater.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "FocusWater.entitlements"; sourceTree = "<group>"; };
+		73425A66CFA746B48555B6A4 /* FocusWaterApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FocusWaterApp.swift"; sourceTree = "<group>"; };
+		A20200000000000000000001 /* AppStoreCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppStoreCoordinator.swift"; sourceTree = "<group>"; };
+		F1C9BB19534F4BDB97BF5CC2 /* FocusSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FocusSession.swift"; sourceTree = "<group>"; };
+		E7E9B048B32A48319A72A21E /* FocusSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FocusSettings.swift"; sourceTree = "<group>"; };
+		A11100000000000000000001 /* FocusCSVDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FocusCSVDocument.swift"; sourceTree = "<group>"; };
+		792D08434548467FBC19E3A8 /* WaterBottle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WaterBottle.swift"; sourceTree = "<group>"; };
+		11D2B63CC63A4E1C9F20E066 /* FocusViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FocusViewModel.swift"; sourceTree = "<group>"; };
+		2AEB1B4D510E4DABA1C819B2 /* AppPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppPreferences.swift"; sourceTree = "<group>"; };
+		DBBED563173F4BC19E421E50 /* Color+Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Theme.swift"; sourceTree = "<group>"; };
+		613668D3DCA144AE9226DB70 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView.swift"; sourceTree = "<group>"; };
+		DD8378A8379E47BF8C4F27CF /* DailyGoalSetupSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DailyGoalSetupSheet.swift"; sourceTree = "<group>"; };
+		A72977350DA847D7ACD5F71F /* FocusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FocusView.swift"; sourceTree = "<group>"; };
+		11661B588C624F84AF7468F8 /* BottleCanvas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BottleCanvas.swift"; sourceTree = "<group>"; };
+		3A15E5CF52714F908FBCBD60 /* AddFocusSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AddFocusSheet.swift"; sourceTree = "<group>"; };
+		34B42BE025724AB0B0A4804A /* WarehouseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WarehouseView.swift"; sourceTree = "<group>"; };
+		E95472CE42014E6983C12FD3 /* BottleCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BottleCard.swift"; sourceTree = "<group>"; };
+			B655013EDB3C471EBFB60FFD /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StatsView.swift"; sourceTree = "<group>"; };
+			E427D26A83154994B4D6393A /* WeeklyChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WeeklyChart.swift"; sourceTree = "<group>"; };
+			3054D2CAC1114B7FA94AE83D /* StreakBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StreakBadge.swift"; sourceTree = "<group>"; };
+			A11300000000000000000001 /* EditFocusSessionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditFocusSessionSheet.swift"; sourceTree = "<group>"; };
+			C1A4EC4F48F9417AB0A6870A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Assets.xcassets"; sourceTree = "<group>"; };
+			EA314E281F6249EB88BCEBF6 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PrivacyInfo.xcprivacy"; sourceTree = "<group>"; };
+			8D84293585ED4706A214A861 /* FocusWater.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "FocusWater.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+			B00200000000000000000001 /* FocusViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FocusViewModelTests.swift"; sourceTree = "<group>"; };
+			B00300000000000000000001 /* FocusWaterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "FocusWaterTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2473B426B0314908AAA8702B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B00400000000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+			91D952302AF94D0B95A30A76 = {
+				isa = PBXGroup;
+				children = (
+					73425A66CFA746B48555B6A4 /* FocusWaterApp.swift */,
+					A20200000000000000000001 /* AppStoreCoordinator.swift */,
+					6F4D8A83E52F4CE3A610B2C7 /* FocusWater.entitlements */,
+					7CD6B26D9BCF4124BE1AB405 /* Models */,
+					F0D140D6CBFE45EC90D4DDDC /* ViewModels */,
+					26756B4F0973482FA502E4E0 /* Extensions */,
+					8FF54421169044AAA0431D72 /* Views */,
+					4999E5A2CC8E49F0AFA54B0D /* Resources */,
+					B00600000000000000000001 /* FocusWaterTests */,
+				);
+				path = "FocusWater"; sourceTree = "<group>";
+			};
+		7CD6B26D9BCF4124BE1AB405 = {
+			isa = PBXGroup;
+			children = (
+				F1C9BB19534F4BDB97BF5CC2 /* FocusSession.swift */,
+				E7E9B048B32A48319A72A21E /* FocusSettings.swift */,
+				792D08434548467FBC19E3A8 /* WaterBottle.swift */,
+				A11100000000000000000001 /* FocusCSVDocument.swift */,
+				A30200000000000000000001 /* FocusTimer.swift */,
+				A30200000000000000000002 /* FocusBackup.swift */,
+			);
+			name = "Models";
+			path = "Models"; sourceTree = "<group>";
+		};
+		F0D140D6CBFE45EC90D4DDDC = {
+			isa = PBXGroup;
+			children = (
+				11D2B63CC63A4E1C9F20E066 /* FocusViewModel.swift */,
+			);
+			name = "ViewModels";
+			path = "ViewModels"; sourceTree = "<group>";
+		};
+			26756B4F0973482FA502E4E0 = {
+				isa = PBXGroup;
+				children = (
+					2AEB1B4D510E4DABA1C819B2 /* AppPreferences.swift */,
+					DBBED563173F4BC19E421E50 /* Color+Theme.swift */,
+				);
+				name = "Extensions";
+				path = "Extensions"; sourceTree = "<group>";
+			};
+			4999E5A2CC8E49F0AFA54B0D = {
+				isa = PBXGroup;
+				children = (
+					C1A4EC4F48F9417AB0A6870A /* Assets.xcassets */,
+					EA314E281F6249EB88BCEBF6 /* PrivacyInfo.xcprivacy */,
+				);
+				name = "Resources";
+				path = "Resources"; sourceTree = "<group>";
+			};
+		8FF54421169044AAA0431D72 = {
+			isa = PBXGroup;
+			children = (
+				613668D3DCA144AE9226DB70 /* ContentView.swift */,
+				DD8378A8379E47BF8C4F27CF /* DailyGoalSetupSheet.swift */,
+				A30200000000000000000003 /* SettingsView.swift */,
+				7D1E2F1BF19B4AAFB509F3A7 /* FocusTab */,
+				2317A24E2F3B438E93902CEB /* WarehouseTab */,
+				8518F95CADB741AE97DAE9CE /* StatsTab */,
+			);
+			name = "Views";
+			path = "Views"; sourceTree = "<group>";
+		};
+		7D1E2F1BF19B4AAFB509F3A7 = {
+			isa = PBXGroup;
+			children = (
+				A72977350DA847D7ACD5F71F /* FocusView.swift */,
+				11661B588C624F84AF7468F8 /* BottleCanvas.swift */,
+				3A15E5CF52714F908FBCBD60 /* AddFocusSheet.swift */,
+			);
+			name = "FocusTab";
+			path = "FocusTab"; sourceTree = "<group>";
+		};
+		2317A24E2F3B438E93902CEB = {
+			isa = PBXGroup;
+			children = (
+				34B42BE025724AB0B0A4804A /* WarehouseView.swift */,
+				E95472CE42014E6983C12FD3 /* BottleCard.swift */,
+			);
+			name = "WarehouseTab";
+			path = "WarehouseTab"; sourceTree = "<group>";
+		};
+		8518F95CADB741AE97DAE9CE = {
+			isa = PBXGroup;
+			children = (
+				B655013EDB3C471EBFB60FFD /* StatsView.swift */,
+				E427D26A83154994B4D6393A /* WeeklyChart.swift */,
+				3054D2CAC1114B7FA94AE83D /* StreakBadge.swift */,
+				A11300000000000000000001 /* EditFocusSessionSheet.swift */,
+			);
+			name = "StatsTab";
+			path = "StatsTab"; sourceTree = "<group>";
+		};
+		B00600000000000000000001 /* FocusWaterTests */ = {
+			isa = PBXGroup;
+			children = (
+				B00200000000000000000001 /* FocusViewModelTests.swift */,
+			);
+			name = FocusWaterTests;
+			path = "../FocusWaterTests";
+			sourceTree = "<group>";
+		};
+		6692C284FB9A4CBAAF24CCE3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8D84293585ED4706A214A861 /* FocusWater.app */,
+				B00300000000000000000001 /* FocusWaterTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+			E0EBBC3721C84C03B812DCEE /* FocusWater */ = {
+				isa = PBXNativeTarget;
+				buildConfigurationList = B176F96E8FE44017AC4B78E3 /* Build configuration list for PBXNativeTarget "FocusWater" */;
+				buildPhases = (
+					CF22DB65B0EF47C091AAD8D2 /* Sources */,
+					95D4BE7272AE40269D224EF8 /* Resources */,
+					2473B426B0314908AAA8702B /* Frameworks */,
+				);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FocusWater;
+			productName = FocusWater;
+			productReference = 8D84293585ED4706A214A861 /* FocusWater.app */;
+			productType = "com.apple.product-type.application";
+		};
+		B00700000000000000000001 /* FocusWaterTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B00A00000000000000000001 /* Build configuration list for PBXNativeTarget "FocusWaterTests" */;
+			buildPhases = (
+				B00500000000000000000001 /* Sources */,
+				B00400000000000000000001 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B00C00000000000000000001 /* PBXTargetDependency */,
+			);
+			name = FocusWaterTests;
+			productName = FocusWaterTests;
+			productReference = B00300000000000000000001 /* FocusWaterTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		11AECF96D3E54412A8EBBD61 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					E0EBBC3721C84C03B812DCEE = {
+						SystemCapabilities = {
+							com.apple.iCloud = {
+								enabled = 1;
+							};
+						};
+					};
+					B00700000000000000000001 = {
+						CreatedOnToolsVersion = 16.0;
+						TestTargetID = E0EBBC3721C84C03B812DCEE;
+					};
+				};
+			};
+			buildConfigurationList = AC0A9CD4AB344CFDA18F2A8D /* Build configuration list */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (en, Base, "zh-Hans");
+			mainGroup = 91D952302AF94D0B95A30A76;
+			productRefGroup = 6692C284FB9A4CBAAF24CCE3;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E0EBBC3721C84C03B812DCEE /* FocusWater */,
+				B00700000000000000000001 /* FocusWaterTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+			95D4BE7272AE40269D224EF8 /* Resources */ = {
+				isa = PBXResourcesBuildPhase;
+				buildActionMask = 2147483647;
+				files = (
+					3BA77C0B6053455BB2942DE4 /* Assets.xcassets in Resources */,
+					E77B75E8E1B348CCB47066EC /* PrivacyInfo.xcprivacy in Resources */,
+				);
+				runOnlyForDeploymentPostprocessing = 0;
+			};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CF22DB65B0EF47C091AAD8D2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DA33AA35F7134042B6E61EA1 /* FocusWaterApp.swift in Sources */,
+				A20100000000000000000001 /* AppStoreCoordinator.swift in Sources */,
+				7274173BE0124598A5E6AE61 /* FocusSession.swift in Sources */,
+				0D9FB0A848024D8B9EF2C954 /* FocusSettings.swift in Sources */,
+				A11200000000000000000001 /* FocusCSVDocument.swift in Sources */,
+				A30100000000000000000001 /* FocusTimer.swift in Sources */,
+				A30100000000000000000002 /* FocusBackup.swift in Sources */,
+				A30100000000000000000003 /* SettingsView.swift in Sources */,
+				FF650A4733854303B2B95CCF /* WaterBottle.swift in Sources */,
+				03CC15383D7048AF9420AB91 /* FocusViewModel.swift in Sources */,
+				9C7F2E9F7A614A748DF30785 /* AppPreferences.swift in Sources */,
+				4FEF6F64905E4BF5BFF85E5C /* Color+Theme.swift in Sources */,
+				769F025BDC55455BB23FCE9D /* ContentView.swift in Sources */,
+				DEAAC2A3CBD247E2B2DCC0EA /* DailyGoalSetupSheet.swift in Sources */,
+				9B74D8EC81304F3791957C0E /* FocusView.swift in Sources */,
+				9F0025627D0845D2BB1D84E8 /* BottleCanvas.swift in Sources */,
+				1F4726A2418944FD888164DE /* AddFocusSheet.swift in Sources */,
+				591563AC4C184B92AD975D03 /* WarehouseView.swift in Sources */,
+				FA5C99F7B147458EB5AF1E17 /* BottleCard.swift in Sources */,
+				BBE0B04CF40F4BD4843534B3 /* StatsView.swift in Sources */,
+				7B4579DA3D5D404A8B97A065 /* WeeklyChart.swift in Sources */,
+				4D4E19030A5E428F824BFEFA /* StreakBadge.swift in Sources */,
+				A11400000000000000000001 /* EditFocusSessionSheet.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B00500000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B00100000000000000000001 /* FocusViewModelTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		FFD412BBC9A745629E49F660 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "FocusWater/FocusWater.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/../Frameworks");
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hanzibo.FocusWater;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		12B0095078D742BB92ECD1B2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "FocusWater/FocusWater.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/../Frameworks");
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hanzibo.FocusWater;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_VERSION = 5.0;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		4756FA96BC8842D093CF552E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		0C67DF21E5A34072995CFEE9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_OPTIMIZATION_LEVEL = s;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				ONLY_ACTIVE_ARCH = NO;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B00800000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hanzibo.FocusWaterTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FocusWater.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/FocusWater";
+			};
+			name = Debug;
+		};
+		B00900000000000000000001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hanzibo.FocusWaterTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FocusWater.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/FocusWater";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		B176F96E8FE44017AC4B78E3 /* Build configuration list */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FFD412BBC9A745629E49F660 /* Debug */,
+				12B0095078D742BB92ECD1B2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AC0A9CD4AB344CFDA18F2A8D /* Build configuration list */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4756FA96BC8842D093CF552E /* Debug */,
+				0C67DF21E5A34072995CFEE9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B00A00000000000000000001 /* Build configuration list for PBXNativeTarget "FocusWaterTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B00800000000000000000001 /* Debug */,
+				B00900000000000000000001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin PBXTargetDependency section */
+		B00C00000000000000000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E0EBBC3721C84C03B812DCEE /* FocusWater */;
+			targetProxy = B00B00000000000000000001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+	};
+	rootObject = 11AECF96D3E54412A8EBBD61 /* Project object */;
+}

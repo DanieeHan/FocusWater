@@ -1,0 +1,41 @@
+.DS_Store
+DerivedData/
+build/
+*.xcuserstate
+xcuserdata/
+*.xccheckout
+*.xcscmblueprint
+*.xcresult
+
+# Local build and distribution outputs
+.build/
+*.xcarchive/
+*.ipa
+*.dSYM/
+*.dSYM.zip
+__pycache__/
+*.pyc
+
+# Credentials and signing material
+.env
+.env.*
+!.env.example
+*.p8
+*.p12
+*.pem
+*.key
+*.mobileprovision
+*.provisionprofile
+
+# Runtime databases and user exports
+*.sqlite
+*.sqlite-*
+*.db
+*.db-*
+*.store
+*.store-*
+default.store_SUPPORT/
+FocusWater Recovery Backups/
+
+# Historical marketing exports stay local; production icons are in Assets.xcassets
+/marketing/app-store-screenshots/
