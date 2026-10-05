@@ -8,7 +8,7 @@
 - A starter `PrivacyInfo.xcprivacy` file exists and matches the current no-tracking/no-third-party-analytics implementation; verify it again from the final archive.
 - The app icon catalog now contains generated iOS and macOS artwork, including a separate 1024x1024 marketing export at `marketing/AppIcon-1024.png`.
 - Focus sessions can now be edited, deleted, and exported as CSV.
-- Twenty-three unit tests cover bottle overflow, goal changes, editing/deletion, timer persistence and failed saves, backup validation/merge/rollback, recovery-file failures, local/cloud preference behavior, and export privacy.
+- Thirty-five regression tests cover bottle overflow, goal changes, editing/deletion, cross-midnight timer accounting, remainder persistence, historical/latest-bottle continuity, backup validation/merge/rollback, on-disk reopening, recovery-file failures, local/cloud preference behavior, and export privacy. All 35 passed in the standalone macOS runner on October 5; the expanded suite has not yet run as iOS Simulator XCTest.
 - September optimization adds a bottle-led adaptive focus page, Activity overview/history, searchable notes, and a dedicated Data & Privacy settings category. See `OPTIMIZATION_2026-09.md`.
 
 ## Hard blockers before submission

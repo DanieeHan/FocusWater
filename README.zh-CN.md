@@ -10,7 +10,7 @@ FocusWater 是使用 SwiftUI 开发的专注记录应用，支持 iPhone、iPad�
 
 ## 功能
 
-- **专注**：水瓶进度、开始/暂停计时、补记时间，保留不足一分钟的计时余量。
+- **专注**：水瓶进度、开始/暂停计时、补记时间；新计时按实际日期拆分，保留不足一分钟的余量。
 - **收藏**：已完成水瓶及对应记录。
 - **记录**：周趋势、连续专注天数、热力图、搜索、编辑、删除和 CSV 导出。
 - **设置**：目标、语言、外观、iCloud 偏好、JSON 备份与合并恢复。
@@ -22,6 +22,7 @@ FocusWater 是使用 SwiftUI 开发的专注记录应用，支持 iPhone、iPad�
 - Xcode 16 或更新版本；此前完整验证使用 Xcode 26.6。
 - iOS / iPadOS 17+，macOS 14+。
 - 不依赖第三方 Swift 包。
+- 独立模型测试脚本使用 `ripgrep`（`rg`）收集源码文件，需要本机已安装。
 
 直接打开 `FocusWater.xcodeproj`，选择 `FocusWater` scheme 和模拟器即可开发。真机和 iCloud 测试需要配置自己的开发团队、Bundle ID 和 CloudKit 容器。默认标识为 `com.hanzibo.FocusWater` 和 `iCloud.com.hanzibo.FocusWater`。
 
@@ -88,3 +89,17 @@ docs/             开发记录、隐私草稿及上架资料
 **未经作者书面许可，禁止将原版或修改版发布、上架、出售或分发为 App，包括免费分发、TestFlight 外部测试、安装包下载和对外托管服务。改名、换图标或修改代码不解除这一限制。**
 
 这是带有 App 分发限制的源码公开项目。完整许可条款以 `LICENSE` 为准。
+
+## 项目演示
+
+水瓶跨天累计，每日统计按记录日期计算；产品规则、两分钟演示和技术讲解见 [演示指南](docs/DEMO.md)。
+
+### 2026-10-04 本地改进验证
+
+独立计时检查（`sh scripts/test-timer-accounting.sh`）通过 12 个回归场景与 1,000 个时长守恒案例；生产 Swift 源码通过 macOS Release/DEBUG、iOS Simulator DEBUG 类型检查。通过独立 macOS 测试脚本实际运行全部 33 项 XCTest（含跨日、暂停恢复、失败重试、余秒快照与历史水瓶用例），0 失败；iOS 模拟器 XCTest 尚未运行。本轮未进行签名构建、真机或 CloudKit 验收。
+
+实际模型回归可运行 `sh scripts/test-model-macos.sh`（需本机 Xcode 编译器和 SDK）；脚本使用临时构建目录及隔离的内存或临时磁盘数据库，不启动 App。
+
+### 2026-10-05 跟进验收
+
+已修复文档中的 `sh` 调用入口，必要时自动转入 Bash。macOS XCTest 共 35 项通过，新增“删除最新瓶后的回退”及“临时磁盘数据库重新打开后保留日期、计时凭据和余秒”验证。独立计时检查再次通过 12 个场景及 1,000 个守恒案例；生产源码的 iOS Simulator DEBUG 类型检查也通过。磁盘测试使用当前 schema，不代表历史版本数据库升级已通过。详见[剩余验收步骤](docs/VALIDATION_2026-10-05.md)。

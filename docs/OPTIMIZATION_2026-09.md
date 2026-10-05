@@ -50,7 +50,7 @@ Visual QA uses a separate simulator with synthetic in-memory records. This is no
 3. Verify an existing on-disk store upgrades with the additive optional timer receipt field, using copies of release-era databases.
 4. Check small iPhone, iPad portrait/landscape, macOS, VoiceOver, maximum Dynamic Type and Reduce Motion. Finish platform-specific sandbox/signing decisions before Mac App Store distribution; do not relocate existing stores without migration.
 5. Replace the support-email placeholder and publish the privacy policy; refresh store screenshots after UI approval.
-6. Create the first reviewed Git commit. No commit was created automatically by this optimization.
+6. The initial repository and source-available license were published on October 3. The October 4–5 follow-up is included in the next source update; device and CloudKit acceptance remain pending.
 
 ## Technical boundaries
 
@@ -61,3 +61,21 @@ No developer backend, account system, analytics, ads or notification permission 
 - [SwiftData synchronization](https://developer.apple.com/documentation/swiftdata/syncing-model-data-across-a-persons-devices)
 - [Observing sync and remote-store events](https://developer.apple.com/documentation/technotes/tn3164-debugging-the-synchronization-of-nspersistentcloudkitcontainer)
 - [Platform data protection classes](https://support.apple.com/guide/security/data-protection-classes-secb010e978a/web)
+
+## October 4 follow-up
+
+Timer snapshots now optionally carry active intervals; old snapshots remain readable, without changing the SwiftData schema or JSON backup version. Saved minutes are distributed by actual calendar day using largest remainders, with later-day ties and a retained chronological subminute tail. Pauses and delayed saves keep the original focus dates. Previously recorded legacy timer dates cannot be reconstructed exactly.
+
+The latest surviving bottle determines the active accumulation workflow. Editing or deleting records in older bottles does not reclaim focus from a newer bottle; a completed latest bottle leads to the next serial. Fully deleting the latest bottle falls back to the latest remaining bottle. Product copy separates daily records from bottles that accumulate across days.
+
+The standalone production-accounting runner passed 12 regression scenarios and 1,000 duration-conservation cases. Full production sources typechecked with the installed compiler for macOS Release/DEBUG and iOS Simulator DEBUG; this is not an Xcode build, XCTest execution or device validation.
+
+A reusable `scripts/test-model-macos.sh` runner compiled the production module and real XCTest file, then executed all 33 cases with zero failures against in-memory SwiftData contexts. Successful timer saves now replace the receipt snapshot after preparing the remainder, removing the former clear-before-write termination window. Final iOS Simulator DEBUG source typechecking also passed after this change.
+
+## October 5 acceptance follow-up
+
+Read the current diff and demo guide before continuing the existing work. The documented `sh scripts/test-model-macos.sh` invocation failed in this environment because its Bash process substitution was parsed in POSIX mode; the script now explicitly re-enters Bash when needed.
+
+All 35 macOS XCTest cases passed. Added checks cover latest-bottle deletion with completed or unfinished surviving bottles, and reopening a temporary on-disk SwiftData database after a simulated timer commit/snapshot interruption. Dates, identifiers, receipts, note content, current bottle, and the five-second tail survive. The current SwiftData models and JSON backup format are unchanged. This disk test is not an old-release migration test.
+
+The standalone timer runner again passed 12 scenarios and 1,000 conservation cases, and production iOS Simulator DEBUG source typechecking passed. Full Xcode build and simulator UI acceptance remain blocked by the local Xcode 27 license prompt; no license or system setting was changed. Remaining acceptance instructions are in `VALIDATION_2026-10-05.md`.

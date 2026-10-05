@@ -46,7 +46,7 @@ final class FocusViewModel {
     private var timerStartedAt: Date?
     private var timerMonotonicStart: TimeInterval?
     private var timerEntryID = UUID()
-    private var timerAccumulatedSeconds = 0
+    private var timerIntervals: [FocusTimerInterval] = []
     private var didRestoreTimerState = false
     private var settings: FocusSettings?
     private let timerPersistence: FocusTimerPersistence
@@ -113,7 +113,14 @@ final class FocusViewModel {
 
             let bottles = try context.fetch(bottleDescriptor)
             completedBottles = bottles.filter { $0.isCompleted }
-            currentBottle = bottles.first { !$0.isCompleted }
+            // Historical corrections may reopen an older bottle. They must not
+            // redirect new focus away from the newest bottle in the workflow.
+            let newestBottle = bottles.max {
+                if $0.serialNumber != $1.serialNumber { return $0.serialNumber < $1.serialNumber }
+                if $0.createdAt != $1.createdAt { return $0.createdAt < $1.createdAt }
+                return $0.id.uuidString < $1.id.uuidString
+            }
+            currentBottle = newestBottle.flatMap { $0.isCompleted ? nil : $0 }
             allSessions = try context.fetch(sessionDescriptor)
         } catch {
             errorMessage = AppLocalizer.text(.readDataFailed, appLanguage)
@@ -138,44 +145,51 @@ final class FocusViewModel {
 
     @discardableResult
     func addFocus(minutes: Int, note: String? = nil, timerEntryID: UUID? = nil) -> Bool {
+        addFocus(records: [FocusDatedMinutes(date: clock.now(), minutes: minutes)], note: note, timerEntryID: timerEntryID)
+    }
+
+    @discardableResult
+    private func addFocus(records: [FocusDatedMinutes], note: String? = nil, timerEntryID: UUID? = nil) -> Bool {
         guard let context = modelContext else { return false }
-        guard minutes > 0, minutes <= 10_080 else {
+        let minutes = records.reduce(0) { $0 + $1.minutes }
+        guard !records.isEmpty, records.allSatisfy({ $0.minutes > 0 }), minutes <= 10_080 else {
             errorMessage = AppLocalizer.text(.inputPositiveMinutes, appLanguage)
             return false
         }
-
-        var remaining = minutes
 
         do {
             if let timerEntryID {
                 let receipt = FetchDescriptor<FocusSession>(predicate: #Predicate { $0.timerEntryID == timerEntryID })
                 if try context.fetchCount(receipt) > 0 { return true }
             }
-            while remaining > 0 {
-                let bottle = try getOrCreateCurrentBottle()
-                guard bottle.capacityMinutes > 0 else { throw CocoaError(.validationMissingMandatoryProperty) }
-                let space = bottle.remainingMinutes
-                if space == 0 {
-                    completeBottle(bottle)
-                    continue
-                }
-                let toAdd = min(remaining, space)
+            for record in records {
+                var remaining = record.minutes
+                while remaining > 0 {
+                    let bottle = try getOrCreateCurrentBottle()
+                    guard bottle.capacityMinutes > 0 else { throw CocoaError(.validationMissingMandatoryProperty) }
+                    let space = bottle.remainingMinutes
+                    if space == 0 {
+                        completeBottle(bottle)
+                        continue
+                    }
+                    let toAdd = min(remaining, space)
 
-                let session = FocusSession(date: clock.now(), duration: toAdd, note: normalizedNote(note))
-                session.timerEntryID = timerEntryID
-                context.insert(session)
-                session.bottle = bottle
-                bottle.totalMinutes += toAdd
+                    let session = FocusSession(date: record.date, duration: toAdd, note: normalizedNote(note))
+                    session.timerEntryID = timerEntryID
+                    context.insert(session)
+                    session.bottle = bottle
+                    bottle.totalMinutes += toAdd
 
-                if bottle.sessions == nil {
-                    bottle.sessions = []
-                }
-                bottle.sessions?.append(session)
+                    if bottle.sessions == nil {
+                        bottle.sessions = []
+                    }
+                    bottle.sessions?.append(session)
 
-                remaining -= toAdd
+                    remaining -= toAdd
 
-                if bottle.totalMinutes >= bottle.capacityMinutes {
-                    completeBottle(bottle)
+                    if bottle.totalMinutes >= bottle.capacityMinutes {
+                        completeBottle(bottle)
+                    }
                 }
             }
 
@@ -438,8 +452,7 @@ final class FocusViewModel {
     func pauseTimer() {
         guard isTimerRunning else { return }
 
-        syncTimerDisplay()
-        timerAccumulatedSeconds = timerElapsedSeconds
+        checkpointTimerInterval()
         timerStartedAt = nil
         timerMonotonicStart = nil
         isTimerRunning = false
@@ -449,16 +462,20 @@ final class FocusViewModel {
     }
 
     func resetTimer() {
+        resetTimerInMemory()
+        timerPersistence.clear()
+    }
+
+    private func resetTimerInMemory() {
         timerTask?.cancel()
         timerTask = nil
         timerStartedAt = nil
         timerMonotonicStart = nil
-        timerAccumulatedSeconds = 0
+        timerIntervals = []
         timerElapsedSeconds = 0
         isTimerRunning = false
         timerEntryID = UUID()
         timerNotice = nil
-        timerPersistence.clear()
     }
 
     func saveTimerFocus() {
@@ -472,12 +489,14 @@ final class FocusViewModel {
             return
         }
 
-        guard addFocus(minutes: minutes, timerEntryID: timerEntryID) else { return }
+        let plan = FocusTimerAccounting.savePlan(for: timerIntervals)
+        guard addFocus(records: plan.records, timerEntryID: timerEntryID) else { return }
         // Keep partial minutes; a successful save must not silently discard them.
-        let remainingSeconds = timerElapsedSeconds % 60
-        resetTimer()
-        timerAccumulatedSeconds = remainingSeconds
-        timerElapsedSeconds = remainingSeconds
+        // Replace the snapshot only after the remainder is ready. Clearing first
+        // would lose the tail if the process ended between the two writes.
+        resetTimerInMemory()
+        timerIntervals = plan.remainingIntervals
+        syncTimerDisplay()
         persistTimerState()
     }
 
@@ -491,8 +510,7 @@ final class FocusViewModel {
 
     func applicationWillResignActive() {
         if isTimerRunning {
-            syncTimerDisplay()
-            timerAccumulatedSeconds = timerElapsedSeconds
+            checkpointTimerInterval()
             timerStartedAt = clock.now()
             timerMonotonicStart = clock.elapsedTime()
         }
@@ -691,12 +709,23 @@ final class FocusViewModel {
     }
 
     private func syncTimerDisplay() {
+        let accumulated = FocusTimerAccounting.duration(of: timerIntervals)
         if let timerMonotonicStart {
-            let delta = max(0, min(clock.elapsedTime() - timerMonotonicStart, 604_800))
-            timerElapsedSeconds = min(604_800, timerAccumulatedSeconds + Int(delta))
+            let delta = max(0, min(clock.elapsedTime() - timerMonotonicStart, FocusTimerAccounting.maximumSeconds))
+            timerElapsedSeconds = Int(min(FocusTimerAccounting.maximumSeconds, accumulated + delta))
         } else {
-            timerElapsedSeconds = timerAccumulatedSeconds
+            timerElapsedSeconds = Int(accumulated)
         }
+    }
+
+    private func checkpointTimerInterval() {
+        guard let startedAt = timerStartedAt, let monotonicStart = timerMonotonicStart else { return }
+        let available = FocusTimerAccounting.maximumSeconds - FocusTimerAccounting.duration(of: timerIntervals)
+        let elapsed = max(0, min(clock.elapsedTime() - monotonicStart, available))
+        if elapsed > 0 { timerIntervals.append(FocusTimerInterval(startedAt: startedAt, durationSeconds: elapsed)) }
+        // This display now includes the checkpoint exactly once.
+        timerMonotonicStart = clock.elapsedTime()
+        syncTimerDisplay()
     }
 
     private func restoreTimerStateIfNeeded() {
@@ -709,18 +738,30 @@ final class FocusViewModel {
 
         guard let snapshot = timerPersistence.load() else { return }
         timerEntryID = snapshot.entryID ?? UUID()
-        timerAccumulatedSeconds = min(max(snapshot.accumulatedSeconds, 0), 604_800)
+        if let intervals = snapshot.intervals {
+            timerIntervals = FocusTimerAccounting.normalized(intervals)
+        } else {
+            // Legacy snapshots have no historical intervals. Use their only
+            // available anchor rather than discarding the recoverable time.
+            let accumulated = Double(min(max(snapshot.accumulatedSeconds, 0), 604_800))
+            let anchor = snapshot.startedAt ?? clock.now()
+            timerIntervals = FocusTimerAccounting.normalized([
+                FocusTimerInterval(startedAt: anchor.addingTimeInterval(-accumulated), durationSeconds: accumulated)
+            ])
+        }
         if snapshot.isRunning, let startedAt = snapshot.startedAt {
             let elapsed = clock.now().timeIntervalSince(startedAt)
+            if elapsed.isFinite, elapsed > 0 {
+                let available = FocusTimerAccounting.maximumSeconds - FocusTimerAccounting.duration(of: timerIntervals)
+                if available > 0 {
+                    timerIntervals.append(FocusTimerInterval(startedAt: startedAt, durationSeconds: min(elapsed, available)))
+                }
+            }
             if elapsed >= 0, elapsed <= 86_400 {
-                timerAccumulatedSeconds = min(604_800, timerAccumulatedSeconds + Int(elapsed))
                 timerStartedAt = clock.now()
                 timerMonotonicStart = clock.elapsedTime()
                 isTimerRunning = true
             } else {
-                if elapsed > 0 {
-                    timerAccumulatedSeconds = min(604_800, timerAccumulatedSeconds + Int(min(elapsed, 604_800)))
-                }
                 timerNotice =
                     appLanguage == .zhHans
                     ? "检测到长时间离开或系统时间变化，已暂停恢复的计时。请核对后再记入。"
@@ -730,7 +771,7 @@ final class FocusViewModel {
         if let entryID = snapshot.entryID {
             let saved = allSessions.filter { $0.timerEntryID == entryID }.reduce(0) { $0 + $1.duration }
             if saved > 0 {
-                timerAccumulatedSeconds = max(0, timerAccumulatedSeconds - saved * 60)
+                timerIntervals = FocusTimerAccounting.remaining(after: Double(saved * 60), in: timerIntervals)
                 isTimerRunning = false
                 timerStartedAt = nil
                 timerMonotonicStart = nil
@@ -748,17 +789,18 @@ final class FocusViewModel {
     private func persistTimerState() {
         // A startup/recovery screen must not overwrite a timer we haven't loaded.
         guard didRestoreTimerState else { return }
-        if timerElapsedSeconds == 0 && !isTimerRunning {
+        if timerIntervals.isEmpty && !isTimerRunning {
             timerPersistence.clear()
             return
         }
 
         timerPersistence.save(
             FocusTimerSnapshot(
-                accumulatedSeconds: timerAccumulatedSeconds,
+                accumulatedSeconds: Int(FocusTimerAccounting.duration(of: timerIntervals)),
                 startedAt: timerStartedAt,
                 isRunning: isTimerRunning,
-                entryID: timerEntryID
+                entryID: timerEntryID,
+                intervals: timerIntervals
             ))
     }
 
@@ -1026,11 +1068,13 @@ final class FocusViewModel {
 
             if screenshotScene == "timer" {
                 timerElapsedSeconds = 18 * 60 + 32
-                timerAccumulatedSeconds = timerElapsedSeconds
+                timerIntervals = [FocusTimerInterval(
+                    startedAt: clock.now().addingTimeInterval(-Double(timerElapsedSeconds)),
+                    durationSeconds: Double(timerElapsedSeconds))]
                 isTimerRunning = true
             } else {
                 timerElapsedSeconds = 0
-                timerAccumulatedSeconds = 0
+                timerIntervals = []
                 isTimerRunning = false
             }
         }

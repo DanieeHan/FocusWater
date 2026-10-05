@@ -130,6 +130,9 @@ struct FocusView: View {
                 .font(.system(.caption, design: .rounded, weight: .medium))
                 ProgressView(value: viewModel.currentBottle?.progress ?? 0).tint(Color.accentBlue)
                     .accessibilityLabel(AppLocalizer.text(.currentBottle, language))
+                Text(language == .zhHans ? "水瓶跨天积累 · 今日时长按记录日期统计" : "Bottles accumulate across days · Today uses record dates")
+                    .font(.caption2).foregroundStyle(Color.secondaryText)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             .padding(.horizontal, 6)
         }

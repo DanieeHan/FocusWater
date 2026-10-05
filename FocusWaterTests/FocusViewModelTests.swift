@@ -89,6 +89,250 @@ final class FocusViewModelTests: XCTestCase {
         XCTAssertEqual(model.totalFocusMinutes, 2)
     }
 
+    func testSuccessfulTimerSaveReplacesSnapshotWithoutClearingRemainder() throws {
+        let suite = "FocusWaterTests.\(UUID().uuidString)"
+        let defaults = TrackingTimerDefaults(suiteName: suite)!
+        addTeardownBlock { defaults.removePersistentDomain(forName: suite) }
+        let persistence = FocusTimerPersistence(userDefaults: defaults)
+        let clock = TestClock()
+        let model = try makeViewModel(goalMinutes: 120, persistence: persistence, clock: clock.value)
+        model.startTimer()
+        clock.advance(125)
+        model.saveTimerFocus()
+
+        XCTAssertTrue(defaults.clearedKeys.isEmpty, "A successful save must not clear the receipt before replacing its remainder")
+        XCTAssertEqual(persistence.load()?.accumulatedSeconds, 5)
+        model.resetTimer()
+        XCTAssertEqual(defaults.clearedKeys, [FocusTimerPersistence.defaultKey])
+    }
+
+    func testCrossMidnightTimerRecordsBothDays() throws {
+        let calendar = Calendar.current
+        let start = localDate(day: 1, hour: 23, minute: 30)
+        let clock = TestClock(date: start)
+        let model = try makeViewModel(goalMinutes: 120, clock: clock.value)
+        model.startTimer()
+        clock.advance(3_600)
+        model.saveTimerFocus()
+
+        let sessions = model.allSessions.sorted { $0.date < $1.date }
+        XCTAssertEqual(sessions.map(\.duration), [30, 30])
+        XCTAssertTrue(calendar.isDate(sessions[0].date, inSameDayAs: start))
+        XCTAssertTrue(calendar.isDate(sessions[1].date, inSameDayAs: clock.date))
+        XCTAssertEqual(model.totalFocusMinutes, 60)
+    }
+
+    func testMidnightRoundingAllowsSavingSixtySeconds() throws {
+        let start = localDate(day: 1, hour: 23, minute: 59, second: 30)
+        let clock = TestClock(date: start)
+        let model = try makeViewModel(goalMinutes: 120, clock: clock.value)
+        model.startTimer()
+        clock.advance(60)
+        model.saveTimerFocus()
+
+        XCTAssertEqual(model.totalFocusMinutes, 1)
+        XCTAssertEqual(model.timerElapsedSeconds, 0)
+        XCTAssertTrue(Calendar.current.isDate(try XCTUnwrap(model.allSessions.first).date, inSameDayAs: clock.date),
+                      "Equal daily remainders round toward the later day")
+    }
+
+    func testPausedTimerSavedLaterKeepsOriginalFocusDates() throws {
+        let start = localDate(day: 1, hour: 10)
+        let clock = TestClock(date: start)
+        let model = try makeViewModel(goalMinutes: 120, clock: clock.value)
+        model.startTimer()
+        clock.advance(65)
+        model.pauseTimer()
+        clock.advance(86_400)
+        model.saveTimerFocus()
+
+        XCTAssertEqual(model.totalFocusMinutes, 1)
+        XCTAssertEqual(model.timerElapsedSeconds, 5)
+        XCTAssertEqual(try XCTUnwrap(model.allSessions.first).date, start)
+    }
+
+    func testPausedMidnightTimerRestoresSegmentsWithoutCountingPause() throws {
+        let start = localDate(day: 1, hour: 23, minute: 58, second: 58)
+        let clock = TestClock(date: start)
+        let persistence = isolatedTimerPersistence()
+        let model = try makeViewModel(goalMinutes: 120, persistence: persistence, clock: clock.value)
+        model.startTimer()
+        clock.advance(62)
+        model.pauseTimer()
+        clock.advance(300)
+        model.startTimer()
+        clock.advance(63)
+        model.pauseTimer()
+
+        let restored = FocusViewModel(timerPersistence: persistence, clock: clock.value)
+        restored.configure(with: try XCTUnwrap(containers.last).mainContext, cloudSyncEnabled: false)
+        restored.saveTimerFocus()
+
+        XCTAssertEqual(restored.allSessions.sorted { $0.date < $1.date }.map(\.duration), [1, 1])
+        XCTAssertEqual(restored.totalFocusMinutes, 2)
+        XCTAssertEqual(restored.timerElapsedSeconds, 5)
+        let remainder = try XCTUnwrap(persistence.load()?.intervals?.first)
+        XCTAssertEqual(remainder.startedAt, clock.date.addingTimeInterval(-5))
+    }
+
+    func testCrossMidnightFailedSaveCanRetryWithoutLosingDates() throws {
+        let clock = TestClock(date: localDate(day: 1, hour: 23, minute: 30))
+        let persistence = isolatedTimerPersistence()
+        var shouldFail = true
+        let model = try makeViewModel(goalMinutes: 120, persistence: persistence, clock: clock.value, save: {
+            if shouldFail { throw TestError.injected }
+            try $0.save()
+        })
+        model.startTimer()
+        clock.advance(3_605)
+        model.saveTimerFocus()
+        XCTAssertTrue(model.allSessions.isEmpty)
+        XCTAssertEqual(model.timerElapsedSeconds, 3_605)
+        XCTAssertEqual(persistence.load()?.intervals?.count, 1)
+
+        shouldFail = false
+        model.saveTimerFocus()
+        XCTAssertEqual(model.allSessions.sorted { $0.date < $1.date }.map(\.duration), [30, 30])
+        XCTAssertEqual(model.timerElapsedSeconds, 5)
+    }
+
+    func testCrossMidnightCommitRecoveryConsumesOnlySavedPrefix() throws {
+        let clock = TestClock(date: localDate(day: 1, hour: 23, minute: 30))
+        let persistence = isolatedTimerPersistence()
+        let model = try makeViewModel(goalMinutes: 120, persistence: persistence, clock: clock.value)
+        model.startTimer()
+        clock.advance(3_605)
+        model.pauseTimer()
+        let beforeCommit = try XCTUnwrap(persistence.load())
+        model.saveTimerFocus()
+        // Restore the snapshot left behind by termination immediately after commit.
+        persistence.save(beforeCommit)
+        let restored = FocusViewModel(timerPersistence: persistence, clock: clock.value)
+        restored.configure(with: try XCTUnwrap(containers.last).mainContext, cloudSyncEnabled: false)
+
+        XCTAssertEqual(restored.totalFocusMinutes, 60)
+        XCTAssertEqual(restored.timerElapsedSeconds, 5)
+        XCTAssertEqual(try XCTUnwrap(persistence.load()?.intervals?.first).startedAt, clock.date.addingTimeInterval(-5))
+        restored.startTimer()
+        clock.advance(55)
+        restored.saveTimerFocus()
+        XCTAssertEqual(restored.totalFocusMinutes, 61)
+        XCTAssertEqual(restored.timerElapsedSeconds, 0)
+    }
+
+    func testFractionalSecondsSurvivePauseAndSnapshot() throws {
+        let clock = TestClock(date: localDate(day: 1, hour: 10))
+        let persistence = isolatedTimerPersistence()
+        let model = try makeViewModel(goalMinutes: 120, persistence: persistence, clock: clock.value)
+        model.startTimer()
+        clock.advance(0.25)
+        model.pauseTimer()
+        XCTAssertNotNil(persistence.load())
+        let restored = FocusViewModel(timerPersistence: persistence, clock: clock.value)
+        restored.configure(with: try XCTUnwrap(containers.last).mainContext, cloudSyncEnabled: false)
+        restored.startTimer()
+        clock.advance(59.75)
+        restored.saveTimerFocus()
+        XCTAssertEqual(restored.totalFocusMinutes, 1)
+        XCTAssertEqual(restored.timerElapsedSeconds, 0)
+    }
+
+    func testEditingHistoricalBottleDoesNotRedirectCurrentOrNextBottle() throws {
+        let model = try makeViewModel(goalMinutes: 60)
+        model.addFocus(minutes: 150)
+        let oldSession = try XCTUnwrap(model.allSessions.first { $0.bottle?.serialNumber == 1 })
+        XCTAssertTrue(model.updateSession(oldSession, date: oldSession.date, minutes: 45, note: nil))
+        XCTAssertEqual(model.currentBottle?.serialNumber, 3)
+        XCTAssertEqual(model.currentBottle?.totalMinutes, 30)
+        model.addFocus(minutes: 30)
+        XCTAssertNil(model.currentBottle)
+        model.addFocus(minutes: 5)
+        XCTAssertEqual(model.currentBottle?.serialNumber, 4)
+        XCTAssertEqual(oldSession.bottle?.totalMinutes, 45)
+    }
+
+    func testDeletingHistoricalSessionDoesNotRedirectCurrentBottle() throws {
+        let model = try makeViewModel(goalMinutes: 60)
+        model.addFocus(minutes: 30)
+        model.addFocus(minutes: 120)
+        let oldSession = try XCTUnwrap(model.allSessions.first { $0.bottle?.serialNumber == 1 })
+        XCTAssertTrue(model.deleteSession(oldSession))
+        XCTAssertEqual(model.currentBottle?.serialNumber, 3)
+        model.addFocus(minutes: 10)
+        XCTAssertEqual(model.currentBottle?.totalMinutes, 40)
+    }
+
+    func testDeletingLatestBottleFallsBackToLatestSurvivor() throws {
+        let model = try makeViewModel(goalMinutes: 60)
+        model.addFocus(minutes: 150)
+        let historical = try XCTUnwrap(model.allSessions.first { $0.bottle?.serialNumber == 1 })
+        XCTAssertTrue(model.updateSession(historical, date: historical.date, minutes: 45, note: nil))
+        let latest = try XCTUnwrap(model.allSessions.first { $0.bottle?.serialNumber == 3 })
+        XCTAssertTrue(model.deleteSession(latest))
+        // Bottle 2 is completed; the reopened older bottle must not take over.
+        XCTAssertNil(model.currentBottle)
+        model.addFocus(minutes: 5)
+        XCTAssertEqual(model.currentBottle?.serialNumber, 3)
+        XCTAssertEqual(historical.bottle?.totalMinutes, 45)
+
+        let unfinished = try makeViewModel(goalMinutes: 60)
+        unfinished.addFocus(minutes: 150)
+        let previous = try XCTUnwrap(unfinished.allSessions.first { $0.bottle?.serialNumber == 2 })
+        XCTAssertTrue(unfinished.updateSession(previous, date: previous.date, minutes: 40, note: nil))
+        let final = try XCTUnwrap(unfinished.allSessions.first { $0.bottle?.serialNumber == 3 })
+        XCTAssertTrue(unfinished.deleteSession(final))
+        XCTAssertEqual(unfinished.currentBottle?.serialNumber, 2)
+        unfinished.addFocus(minutes: 5)
+        XCTAssertEqual(unfinished.currentBottle?.totalMinutes, 45)
+    }
+
+    func testDiskStoreReopenPreservesDatesReceiptsAndCurrentBottle() throws {
+        let directory = try temporaryDirectory()
+        let storeURL = directory.appendingPathComponent("reopen.store")
+        let schema = AppStoreCoordinator.makeSchema()
+        let configuration = ModelConfiguration(schema: schema, url: storeURL, cloudKitDatabase: .none)
+        let clock = TestClock(date: localDate(day: 1, hour: 23, minute: 30))
+        let persistence = isolatedTimerPersistence()
+        var savedSnapshot: FocusTimerSnapshot?
+        var savedSessions: [(UUID, Date, Int)] = []
+        do {
+            let container = try ModelContainer(for: schema, configurations: configuration)
+            container.mainContext.autosaveEnabled = false
+            container.mainContext.insert(FocusSettings(dailyGoalMinutes: 60,
+                languageCode: AppLanguage.english.rawValue, appearanceMode: AppAppearanceMode.system.rawValue))
+            try container.mainContext.save()
+            let model = FocusViewModel(timerPersistence: persistence, clock: clock.value)
+            model.configure(with: container.mainContext, cloudSyncEnabled: false)
+            model.startTimer()
+            clock.advance(3_605)
+            model.pauseTimer()
+            savedSnapshot = try XCTUnwrap(persistence.load())
+            model.saveTimerFocus()
+            model.addFocus(minutes: 5, note: "Disk round trip")
+            savedSessions = model.allSessions.map { ($0.id, $0.date, $0.duration) }
+        }
+        // Simulate termination after the database commit but before snapshot replacement.
+        persistence.save(try XCTUnwrap(savedSnapshot))
+        let reopened = try ModelContainer(for: schema, configurations: configuration)
+        containers.append(reopened)
+        reopened.mainContext.autosaveEnabled = false
+        let restored = FocusViewModel(timerPersistence: persistence, clock: clock.value)
+        restored.configure(with: reopened.mainContext, cloudSyncEnabled: false)
+        XCTAssertEqual(restored.totalFocusMinutes, 65)
+        XCTAssertEqual(restored.timerElapsedSeconds, 5)
+        XCTAssertFalse(restored.isTimerRunning)
+        XCTAssertEqual(restored.currentBottle?.serialNumber, 2)
+        XCTAssertEqual(restored.currentBottle?.totalMinutes, 5)
+        XCTAssertEqual(restored.allSessions.count, savedSessions.count)
+        for (id, date, minutes) in savedSessions {
+            let session = try XCTUnwrap(restored.allSessions.first { $0.id == id })
+            XCTAssertEqual(session.date, date)
+            XCTAssertEqual(session.duration, minutes)
+        }
+        XCTAssertEqual(restored.allSessions.filter { $0.timerEntryID != nil }.count, 2)
+        XCTAssertEqual(restored.allSessions.first { $0.note != nil }?.note, "Disk round trip")
+    }
+
     func testTimerPauseResumeAndBackgroundUseElapsedClock() throws {
         let clock = TestClock()
         let model = try makeViewModel(goalMinutes: 120, clock: clock.value)
@@ -303,6 +547,11 @@ final class FocusViewModelTests: XCTestCase {
         return FocusTimerPersistence(userDefaults: defaults)
     }
 
+    private func localDate(day: Int, hour: Int, minute: Int = 0, second: Int = 0) -> Date {
+        Calendar.current.date(from: DateComponents(year: 2026, month: 10, day: day,
+                                                   hour: hour, minute: minute, second: second))!
+    }
+
     private func temporaryDirectory() throws -> URL {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent("FocusWaterTests-\(UUID().uuidString)")
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
@@ -333,9 +582,18 @@ final class FocusViewModelTests: XCTestCase {
 
 private enum TestError: Error { case injected }
 
+private final class TrackingTimerDefaults: UserDefaults, @unchecked Sendable {
+    var clearedKeys: [String] = []
+    override func removeObject(forKey defaultName: String) {
+        clearedKeys.append(defaultName)
+        super.removeObject(forKey: defaultName)
+    }
+}
+
 private final class TestClock {
-    var date = Date()
+    var date: Date
     var elapsed: TimeInterval = 0
+    init(date: Date = Date()) { self.date = date }
     var value: FocusClock { FocusClock(now: { self.date }, elapsedTime: { self.elapsed }) }
     func advance(_ seconds: TimeInterval) { date = date.addingTimeInterval(seconds); elapsed += seconds }
 }

@@ -10,7 +10,7 @@ This is a pre-release development snapshot. GitHub source publication and App St
 
 ## Features
 
-- **Focus:** bottle progress, start/pause timing, manual logging, and retention of sub-minute timer remainder.
+- **Focus:** bottle progress, start/pause timing, manual logging, cross-midnight date accounting, and retention of sub-minute timer remainder.
 - **Collection:** completed bottles and their associated records.
 - **Activity:** weekly trends, streaks, a three-month heatmap, search, editing, deletion, and CSV export.
 - **Settings:** goals, language, appearance, iCloud preference, and versioned JSON backup/merge restore.
@@ -22,6 +22,7 @@ This is a pre-release development snapshot. GitHub source publication and App St
 - Xcode 16 or later; the previous full verification used Xcode 26.6.
 - iOS / iPadOS 17+, macOS 14+.
 - No third-party Swift package dependencies.
+- The standalone model test script requires `ripgrep` (`rg`) to collect source files.
 
 Open `FocusWater.xcodeproj`, select the `FocusWater` scheme, and choose a simulator. Physical-device and iCloud testing require your own development team, bundle identifier, and CloudKit container. The current identifiers are `com.hanzibo.FocusWater` and `iCloud.com.hanzibo.FocusWater`.
 
@@ -88,3 +89,17 @@ This project uses the custom [FocusWater Source-Available License](LICENSE). You
 **Publishing, listing, selling, or distributing original or modified apps requires the author's prior written permission, including free distribution, external TestFlight testing, installer downloads, and third-party hosted services. Renaming, rebranding, or modifying the code does not remove this restriction.**
 
 This is a source-available project with an app-distribution restriction. The complete terms in `LICENSE` govern use.
+
+## Project demo
+
+Bottles accumulate across days, while daily statistics follow record dates. See the [demo guide](docs/DEMO.md) (Chinese) for product rules, a two-minute walkthrough and technical talking points.
+
+### Local validation on October 4, 2026
+
+`sh scripts/test-timer-accounting.sh` passed 12 regression scenarios and 1,000 duration-conservation cases. Production Swift sources typechecked for macOS Release/DEBUG and iOS Simulator DEBUG. The standalone macOS runner executed all 33 XCTest cases against the production models, with zero failures, including cross-midnight accounting, pause/relaunch, failed-save retry, remainder snapshots and historical bottles. iOS Simulator XCTest has not been run. Signed builds, physical devices and CloudKit behavior were not validated in this pass.
+
+Run `sh scripts/test-model-macos.sh` for real model regressions (requires the installed Xcode compiler and SDK). It uses temporary build files and isolated in-memory or temporary on-disk databases without launching the app.
+
+### Follow-up validation on October 5, 2026
+
+The documented `sh` entry point now switches to Bash when required. All 35 macOS XCTest cases passed, including two added checks for deleting the latest bottle and reopening a temporary on-disk SwiftData store with dates, timer receipts, and remainder intact. Timer accounting again passed all 12 scenarios and 1,000 conservation cases; production iOS Simulator DEBUG source typechecking also passed. The disk test covers the current schema, not migration from a historical release. See the [remaining acceptance steps](docs/VALIDATION_2026-10-05.md) (Chinese).
